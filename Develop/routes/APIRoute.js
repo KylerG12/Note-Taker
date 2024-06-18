@@ -1,25 +1,23 @@
 const router = require('express').Router();
-const db = require('../db/db.json');
 const fs = require('fs');
+const uuid = require('uuid/v1');
 
-router.get('/notes', (req, res) => {
-    return res.json(db);    
+router.get('/notes', async (req, res) => {
+    const data = await fs.readFileSync('./db/db.json');
+    const newData = JSON.parse(data);
+    return res.json(newData);
+       
 })
 
 router.post('/notes', (req, res) => {
     const arr = fs.readFileSync('./db/db.json');
     const par = JSON.parse(arr);
-    const add = [...par, req.body];
-
+    const add = [...par, {...req.body, id:uuid()}];
     fs.writeFileSync('./db/db.json', JSON.stringify(add))
-    return res.json(db);
+    const data = fs.readFileSync('./db/db.json');
+    const newData = JSON.parse(data);
+    return res.json(newData);
 });
-    // // fs.appendFileSync('./db/db.json', JSON.stringify(req.body), (err) => err && console.error(err))
-
-
-
-
-
 
 
 
